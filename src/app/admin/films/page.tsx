@@ -159,7 +159,7 @@ export default function FilmsAdmin() {
                 {/* Badges Overlay on Poster */}
                 <div className="absolute top-2 left-2 flex flex-col gap-1">
                   {film.featured && (
-                    <div className="bg-[#7C3AED] text-white p-1 rounded-full shadow-lg" title="Featured">
+                    <div className="bg-[#D4AF37] text-white p-1 rounded-full shadow-lg" title="Featured">
                       <Star size={12} fill="currentColor" />
                     </div>
                   )}
