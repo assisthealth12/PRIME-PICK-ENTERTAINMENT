@@ -66,7 +66,7 @@ export default function FilmsPage() {
   // Compute unique filter options
   const genres = ["All", ...Array.from(new Set(films.map(f => f.genre).filter(Boolean)))];
   const directors = ["All", ...Array.from(new Set(films.map(f => f.directorName).filter(Boolean)))];
-  const years = ["All", ...Array.from(new Set(films.map(f => f.year?.toString()).filter(Boolean)))].sort((a, b) => b.localeCompare(a));
+  const years = ["All", ...Array.from(new Set(films.map(f => f.year?.toString()).filter(Boolean) as string[]))].sort((a, b) => b.localeCompare(a));
   const languages = ["All", ...Array.from(new Set(films.map(f => f.language).filter(Boolean)))];
 
   // Apply filters & sorting
