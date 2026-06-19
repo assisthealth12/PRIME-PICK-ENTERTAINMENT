@@ -118,10 +118,14 @@ export default function FilmsPage() {
           </div>
         ) : (
           <>
-            {/* ── Sorting ── */}
-            <div className="flex flex-col md:flex-row md:items-end justify-end gap-6 mb-10 border-b border-border-subtle pb-6">
+            {/* ── Filters & Sorting ── */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 border-b border-border-subtle pb-6">
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-6">
+                <FilterSelect label="Language" value={selectedLanguage} options={languages} onChange={setSelectedLanguage} />
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-secondary">Sort</span>
                 <div className="relative">
                   <select 

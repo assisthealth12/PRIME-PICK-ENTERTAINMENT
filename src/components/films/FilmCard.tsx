@@ -19,11 +19,11 @@ interface FilmCardProps {
 
 export function FilmCard({ film }: FilmCardProps) {
   const isUpcoming = film.status === "Upcoming";
-  const linkHref = film.slug ? `/films/${film.slug}` : `/films/${film.id}`;
+  const linkHref = `/films/${film.id}`;
 
   return (
     <Link href={linkHref} className="group flex flex-col">
-      <div className="relative aspect-[2/3] bg-surface border border-border-subtle overflow-hidden mb-4 transition-all duration-700 hover:shadow-xl">
+      <div className="relative aspect-video bg-surface border border-border-subtle overflow-hidden mb-4 transition-all duration-700 hover:shadow-xl">
         {film.posterUrl ? (
           <Image 
             src={film.posterUrl}

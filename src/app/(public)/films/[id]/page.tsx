@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,6 +53,13 @@ export default function FilmDetailsPage() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setFilm({ id: docSnap.id, ...docSnap.data() } as Film);
+        } else {
+          const q = query(collection(db, "films"), where("slug", "==", params.id as string));
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            const slugDoc = querySnapshot.docs[0];
+            setFilm({ id: slugDoc.id, ...slugDoc.data() } as Film);
+          }
         }
       } catch (error) {
         console.error("Error fetching film:", error);

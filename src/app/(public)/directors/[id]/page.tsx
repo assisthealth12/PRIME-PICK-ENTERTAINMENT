@@ -212,7 +212,7 @@ export default function DirectorDetailsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {films.map((film) => (
                 <Link href={`/films/${film.id}`} key={film.id} className="group flex flex-col">
-                  <div className="relative aspect-[2/3] glass-panel rounded overflow-hidden mb-4 transition-all duration-500 group-hover:border-accent group-hover:shadow-xl group-hover:-translate-y-1">
+                  <div className="relative aspect-video glass-panel rounded overflow-hidden mb-4 transition-all duration-500 group-hover:border-accent group-hover:shadow-xl group-hover:-translate-y-1">
                     {film.posterUrl ? (
                       <Image 
                         src={film.posterUrl}

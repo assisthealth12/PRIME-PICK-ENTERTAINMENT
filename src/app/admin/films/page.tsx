@@ -195,9 +195,6 @@ export default function FilmsAdmin() {
                     {film.year && <span>• {film.year}</span>}
                     {film.runtime && <span>• {film.runtime}</span>}
                   </div>
-                  {film.slug && (
-                    <p className="text-[10px] text-gray-400 font-mono mb-1">/{film.slug}</p>
-                  )}
                 </div>
 
                 {/* Actions */}

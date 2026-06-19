@@ -9,6 +9,14 @@ export function ChairModel() {
   const { scene } = useGLTF("/Director_chair.glb");
   const modelRef = useRef<THREE.Object3D>(null);
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -59,7 +67,7 @@ export function ChairModel() {
     }
   }, [scene]);
 
-  return <primitive ref={modelRef} object={scene} scale={2.8} position={[0, -0.8, 0]} />;
+  return <primitive ref={modelRef} object={scene} scale={isMobile ? 1.6 : 2.8} position={isMobile ? [0, -0.4, 0] : [0, -0.8, 0]} />;
 }
 
 export function ChairCanvas() {

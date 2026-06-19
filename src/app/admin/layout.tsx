@@ -28,6 +28,7 @@ export default function AdminLayout({
                 <a href="/admin" className="text-xs font-bold text-black uppercase tracking-widest hover:text-gray-500 transition-colors">Dashboard</a>
                 <a href="/admin/films" className="text-xs font-bold text-black uppercase tracking-widest hover:text-gray-500 transition-colors">Films</a>
                 <a href="/admin/directors" className="text-xs font-bold text-black uppercase tracking-widest hover:text-gray-500 transition-colors">Directors</a>
+                <a href="/admin/settings" className="text-xs font-bold text-black uppercase tracking-widest hover:text-gray-500 transition-colors">Settings</a>
               </nav>
               
               <div className="border-t-2 border-black pt-6">

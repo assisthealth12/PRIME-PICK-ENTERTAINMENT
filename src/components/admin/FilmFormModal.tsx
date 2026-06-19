@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { db, storage } from "@/lib/firebase/config";
-import { doc, addDoc, updateDoc, collection, serverTimestamp } from "firebase/firestore";
+import { doc, addDoc, updateDoc, collection, serverTimestamp, getDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { Loader2, X, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
@@ -10,7 +10,6 @@ import Image from "next/image";
 interface FilmData {
   id?: string;
   title: string;
-  slug?: string;
   directorName: string;
   cast?: string[];
   youtubeLink: string;
@@ -39,7 +38,6 @@ export function FilmFormModal({ film, onClose, onSuccess }: FilmFormModalProps) 
 
   // Form State
   const [title, setTitle] = useState(film?.title || "");
-  const [slug, setSlug] = useState(film?.slug || "");
   const [directorName, setDirectorName] = useState(film?.directorName || "");
   const [castStr, setCastStr] = useState(film?.cast ? film.cast.join(", ") : "");
   const [youtubeLink, setYoutubeLink] = useState(film?.youtubeLink || "");
@@ -53,18 +51,27 @@ export function FilmFormModal({ film, onClose, onSuccess }: FilmFormModalProps) 
   const [status, setStatus] = useState(film?.status || "Released");
   const [visibility, setVisibility] = useState(film?.visibility || "Publish");
   const [featured, setFeatured] = useState(film?.featured || false);
+  const [availableLanguages, setAvailableLanguages] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      try {
+        const docRef = doc(db, "settings", "general");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().languages) {
+          setAvailableLanguages(docSnap.data().languages);
+        }
+      } catch (error) {
+        console.error("Error fetching languages:", error);
+      }
+    };
+    fetchLanguages();
+  }, []);
 
   const [posterFile, setPosterFile] = useState<File | null>(null);
   const existingPosterUrl = film?.posterUrl || "";
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Auto-generate slug from title
-  useEffect(() => {
-    if (!film && title && !slug) {
-      setSlug(title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
-    }
-  }, [title, film, slug]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,7 +93,6 @@ export function FilmFormModal({ film, onClose, onSuccess }: FilmFormModalProps) 
 
       const filmData: Record<string, unknown> = {
         title,
-        slug,
         directorName,
         cast: castArray,
         youtubeLink,
@@ -150,10 +156,6 @@ export function FilmFormModal({ film, onClose, onSuccess }: FilmFormModalProps) 
               <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full border-2 border-gray-300 focus:border-black p-2.5 text-sm outline-none transition-colors" placeholder="e.g. I Met You" />
             </div>
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5 text-gray-600">Slug</label>
-              <input type="text" value={slug} onChange={e => setSlug(e.target.value)} className="w-full border-2 border-gray-300 focus:border-black p-2.5 text-sm outline-none transition-colors" placeholder="e.g. i-met-you" />
-            </div>
-            <div>
               <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5 text-gray-600">Director Name *</label>
               <input type="text" value={directorName} onChange={e => setDirectorName(e.target.value)} required className="w-full border-2 border-gray-300 focus:border-black p-2.5 text-sm outline-none transition-colors" placeholder="e.g. Veera Sai Eshwar" />
             </div>
@@ -163,7 +165,19 @@ export function FilmFormModal({ film, onClose, onSuccess }: FilmFormModalProps) 
             </div>
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5 text-gray-600">Language</label>
-              <input type="text" value={language} onChange={e => setLanguage(e.target.value)} className="w-full border-2 border-gray-300 focus:border-black p-2.5 text-sm outline-none transition-colors" placeholder="e.g. English" />
+              <select value={language} onChange={e => setLanguage(e.target.value)} className="w-full border-2 border-gray-300 focus:border-black p-2.5 text-sm outline-none bg-white">
+                <option value="">Select a language...</option>
+                {Array.from(
+                  new Map(
+                    [...availableLanguages, language]
+                      .filter(Boolean)
+                      .map(l => l.trim())
+                      .map(l => [l.toLowerCase(), l])
+                  ).values()
+                ).map(lang => (
+                  <option key={lang} value={lang}>{lang}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5 text-gray-600">YouTube Link</label>
