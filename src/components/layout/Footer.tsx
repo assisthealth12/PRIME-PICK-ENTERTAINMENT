@@ -53,11 +53,15 @@ export function Footer() {
               <div>
                 <h4 className="font-heading font-bold text-white tracking-[0.15em] uppercase text-xs mb-6">Explore</h4>
                 <div className="flex flex-col gap-4">
-                  {["Films", "Directors", "Behind The Scenes", "Journal"].map((link) => (
-                    <div key={link} className="flex items-center gap-3">
+                  {[
+                    { label: "Films", href: "/films" },
+                    { label: "Directors", href: "/directors" },
+                    { label: "Behind The Scenes", href: "/bts" }
+                  ].map((link) => (
+                    <div key={link.label} className="flex items-center gap-3">
                       <div className="h-4 w-[2px] bg-[#D4AF37]"></div>
-                      <Link href={`/${link.toLowerCase().replace(/ /g, "-")}`} className="text-white/90 hover:text-[#D4AF37] text-sm font-medium transition-colors">
-                        {link}
+                      <Link href={link.href} className="text-white/90 hover:text-[#D4AF37] text-sm font-medium transition-colors">
+                        {link.label}
                       </Link>
                     </div>
                   ))}
