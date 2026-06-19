@@ -84,13 +84,13 @@ export function Footer() {
 
             {/* Divider Line and Socials */}
             <div className="border-t border-white/30 flex justify-start sm:justify-center md:justify-end pt-6 gap-8 md:gap-6 mt-4 md:mt-0">
-              <a href="https://youtube.com" target="_blank" rel="noreferrer" className="text-[#D4AF37] hover:text-white transition-colors" aria-label="YouTube">
+              <a href="https://www.youtube.com/@PrimePickEntertainment" target="_blank" rel="noreferrer" className="text-[#D4AF37] hover:text-white transition-colors" aria-label="YouTube">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-[#D4AF37] hover:text-white transition-colors" aria-label="Instagram">
+              <a href="https://www.instagram.com/primepick_entertainment/" target="_blank" rel="noreferrer" className="text-[#D4AF37] hover:text-white transition-colors" aria-label="Instagram">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
               </a>
-              <a href="mailto:hello@primepick.com" className="text-[#D4AF37] hover:text-white transition-colors" aria-label="Email">
+              <a href="mailto:adminprimepickentertainment@gmail.com" className="text-[#D4AF37] hover:text-white transition-colors" aria-label="Email">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
               </a>
             </div>
