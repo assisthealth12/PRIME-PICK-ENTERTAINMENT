@@ -21,7 +21,20 @@ export const metadata: Metadata = {
     template: "%s | Prime Pick Entertainment",
   },
   description: "A premium YouTube-first film production house in Bangalore that discovers directors, produces independent films, and showcases cinematic storytelling.",
-  keywords: ["Film Production Bangalore", "Independent Cinema India", "Prime Pick Entertainment", "Short Films", "Directors", "YouTube Films"],
+  keywords: [
+    "Film Production Company Bangalore", 
+    "Best Telugu Short Films", 
+    "Kannada Short Film Production", 
+    "Top Tamil Short Movies", 
+    "New Short Film Release", 
+    "Best YouTube Short Films", 
+    "Comedy Short Movies", 
+    "Thriller Short Films", 
+    "Directors Challenge", 
+    "Independent Cinema India", 
+    "Award Winning Short Films", 
+    "Prime Pick Entertainment"
+  ],
   openGraph: {
     type: "website",
     locale: "en_IN",
