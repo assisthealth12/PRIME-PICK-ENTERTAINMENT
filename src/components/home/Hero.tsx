@@ -56,10 +56,10 @@ export function Hero() {
         
         <motion.p 
           variants={itemVariants}
-          className="font-heading text-lg sm:text-xl md:text-2xl font-light italic text-text-secondary mb-12 tracking-wider px-4 max-w-2xl mx-auto space-y-2"
+          className="font-heading text-lg sm:text-xl md:text-2xl font-medium italic text-[#222222] mb-12 tracking-wider px-4 max-w-2xl mx-auto space-y-2 drop-shadow-sm"
         >
           <span className="block">Every Story Has A Different Perspective.</span>
-          <span className="block text-base sm:text-lg opacity-80">Original Films. Emerging Talent. Innovative Entertainment.</span>
+          <span className="block text-base sm:text-lg text-[#444444] font-normal">Original Films. Emerging Talent. Innovative Entertainment.</span>
         </motion.p>
 
         <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center gap-6">
