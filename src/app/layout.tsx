@@ -61,6 +61,9 @@ export const metadata: Metadata = {
     icon: "/rb.png",
     apple: "/rb.png",
   },
+  verification: {
+    google: "WUBbTqGlNeBpVioxLNqfAKUTv49W76epHYW6cdwAUQw",
+  },
 };
 
 // JSON-LD Structured Data for Google Knowledge Panel
