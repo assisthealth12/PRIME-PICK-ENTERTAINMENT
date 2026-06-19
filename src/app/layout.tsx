@@ -17,6 +17,9 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: "Prime Pick Entertainment",
   description: "India's Independent Cinema Platform",
+  icons: {
+    icon: "/LOGO.jpg",
+  },
 };
 
 export default function RootLayout({
