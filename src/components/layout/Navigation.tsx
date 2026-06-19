@@ -147,13 +147,13 @@ export function Navigation() {
       >
         <button 
           onClick={() => setIsSearchOpen(false)}
-          className="absolute top-8 right-8 p-4 text-text-secondary hover:text-white transition-colors hover:rotate-90 duration-300"
+          className="absolute top-8 right-8 p-4 text-text-secondary hover:text-text-primary transition-colors hover:rotate-90 duration-300"
         >
           <X size={32} strokeWidth={1} />
         </button>
 
         <div className="w-full max-w-3xl transform transition-transform duration-500 delay-100" style={{ transform: isSearchOpen ? 'translateY(0)' : 'translateY(20px)' }}>
-          <h2 className="font-heading text-3xl md:text-5xl font-bold text-white mb-8 text-center tracking-wider">
+          <h2 className="font-heading text-3xl md:text-5xl font-bold text-text-primary mb-8 text-center tracking-wider">
             What are you looking for?
           </h2>
           
@@ -164,24 +164,24 @@ export function Navigation() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search films, directors, genres..." 
-              className="w-full bg-transparent border-b-2 border-[#333] py-4 md:py-6 pl-4 md:pl-8 pr-16 text-xl md:text-3xl text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors"
+              className="w-full bg-transparent border-b-2 border-gray-300 py-4 md:py-6 pl-4 md:pl-8 pr-16 text-xl md:text-3xl text-text-primary placeholder-gray-400 focus:outline-none focus:border-accent transition-colors"
             />
             <button 
               type="submit" 
-              className="absolute right-0 top-1/2 -translate-y-1/2 p-4 text-gray-500 group-focus-within:text-accent hover:text-accent transition-colors"
+              className="absolute right-0 top-1/2 -translate-y-1/2 p-4 text-gray-400 group-focus-within:text-accent hover:text-accent transition-colors"
             >
               <ArrowRight size={32} strokeWidth={1.5} />
             </button>
           </form>
           
-          <div className="mt-12 flex flex-wrap justify-center gap-4 text-sm font-heading tracking-widest uppercase text-gray-500">
-            <span className="hidden md:inline">Popular:</span>
+          <div className="mt-12 flex flex-wrap justify-center gap-4 text-sm font-heading tracking-widest uppercase text-text-secondary">
+            <span className="hidden md:inline text-text-primary font-bold">Popular:</span>
             <button onClick={() => { setSearchQuery("Telugu"); handleSearchSubmit(new Event('submit') as any); }} className="hover:text-accent transition-colors">Telugu</button>
-            <span className="text-[#333]">•</span>
+            <span className="text-gray-300">•</span>
             <button onClick={() => { setSearchQuery("Kannada"); handleSearchSubmit(new Event('submit') as any); }} className="hover:text-accent transition-colors">Kannada</button>
-            <span className="text-[#333]">•</span>
+            <span className="text-gray-300">•</span>
             <button onClick={() => { setSearchQuery("Comedy"); handleSearchSubmit(new Event('submit') as any); }} className="hover:text-accent transition-colors">Comedy</button>
-            <span className="text-[#333]">•</span>
+            <span className="text-gray-300">•</span>
             <button onClick={() => { setSearchQuery("Thriller"); handleSearchSubmit(new Event('submit') as any); }} className="hover:text-accent transition-colors">Thriller</button>
           </div>
         </div>
