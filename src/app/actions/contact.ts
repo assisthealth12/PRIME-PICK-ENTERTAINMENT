@@ -15,6 +15,9 @@ export async function submitContactForm(formData: FormData) {
 
     const response = await fetch(url, {
       method: "POST",
+      headers: {
+        "Accept": "application/json"
+      },
       body: newFormData,
     });
     
