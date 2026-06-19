@@ -17,7 +17,7 @@ type GLTFResult = GLTF & {
 }
 
 export function Model(props: React.JSX.IntrinsicElements['group']) {
-  const { nodes, materials } = useGLTF('/Director_chair.glb') as GLTFResult
+  const { nodes, materials } = useGLTF('/Director_chair.glb') as unknown as GLTFResult
   return (
     <group {...props} dispose={null}>
       <mesh geometry={nodes.mesh_node.geometry} material={nodes.mesh_node.material} />
