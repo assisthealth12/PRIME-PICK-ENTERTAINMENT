@@ -13,7 +13,7 @@ type GLTFResult = GLTF & {
     mesh_node: THREE.Mesh
   }
   materials: {}
-  animations: GLTFAction[]
+  animations: THREE.AnimationClip[]
 }
 
 export function Model(props: JSX.IntrinsicElements['group']) {
