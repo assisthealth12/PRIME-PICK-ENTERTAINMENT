@@ -67,7 +67,7 @@ export function ChairModel() {
     }
   }, [scene]);
 
-  return <primitive ref={modelRef} object={scene} scale={isMobile ? 1.6 : 2.8} position={isMobile ? [0, -0.4, 0] : [0, -0.8, 0]} />;
+  return <primitive ref={modelRef} object={scene} scale={isMobile ? 1.1 : 2.8} position={isMobile ? [0, -0.3, 0] : [0, -0.8, 0]} />;
 }
 
 export function ChairCanvas() {
