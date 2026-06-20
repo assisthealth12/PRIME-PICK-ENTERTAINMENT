@@ -67,6 +67,7 @@ const jsonLd = {
     "addressRegion": "Karnataka",
     "addressCountry": "IN"
   },
+  "telephone": "+919611232569",
   "sameAs": [
     "https://www.youtube.com/@PrimePickEntertainment",
     "https://www.instagram.com/primepick_entertainment/"

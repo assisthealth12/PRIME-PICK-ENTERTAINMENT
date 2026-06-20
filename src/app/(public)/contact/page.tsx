@@ -61,7 +61,8 @@ export default function ContactPage() {
       <div className="container mx-auto px-4 md:px-8 max-w-2xl text-center">
         <h1 className="font-heading text-5xl md:text-6xl font-bold tracking-wider text-text-primary mb-6">Contact</h1>
         <p className="font-heading italic text-text-secondary text-xl mx-auto mb-16">
-          Have a script? Want to collaborate? Let's talk.
+          Have a script? Want to collaborate? Let's talk.<br/>
+          <a href="tel:+919611232569" className="text-accent hover:underline not-italic font-bold text-2xl inline-block mt-4">+91 96112 32569</a>
         </p>
         <div className="bg-surface border border-border-subtle p-8 rounded text-left relative overflow-hidden">
           <Suspense fallback={<div className="py-12 text-center text-text-secondary">Loading form...</div>}>

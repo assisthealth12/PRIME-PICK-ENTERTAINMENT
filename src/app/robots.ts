@@ -19,7 +19,7 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         // Explicitly welcome Anthropic/Claude bots
-        userAgent: 'anthropic-ai',
+        userAgent: ['anthropic-ai', 'ClaudeBot'],
         allow: '/',
       }
     ],
