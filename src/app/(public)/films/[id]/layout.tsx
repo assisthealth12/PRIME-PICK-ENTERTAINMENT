@@ -10,6 +10,7 @@ interface Film {
   year?: number;
   slug?: string;
   id?: string;
+  youtubeLink?: string;
 }
 
 export async function generateMetadata(
@@ -89,19 +90,48 @@ export default async function FilmDetailsLayout({
     console.error("Error fetching film for jsonld:", error);
   }
 
-  const jsonLd = film ? {
-    "@context": "https://schema.org",
-    "@type": "Movie",
-    "name": film.title,
-    "description": film.synopsis,
-    "image": film.posterUrl,
-    "director": {
-      "@type": "Person",
-      "name": film.directorName
+  const jsonLd = film ? [
+    {
+      "@context": "https://schema.org",
+      "@type": ["Movie", "VideoObject"],
+      "name": film.title,
+      "description": film.synopsis,
+      "image": film.posterUrl,
+      "thumbnailUrl": film.posterUrl,
+      "uploadDate": film.year ? `${film.year}-01-01` : undefined,
+      "embedUrl": film.youtubeLink,
+      "director": {
+        "@type": "Person",
+        "name": film.directorName
+      },
+      "dateCreated": film.year ? film.year.toString() : undefined,
+      "url": `https://www.primepickentertainment.com/films/${film.slug || film.id}`
     },
-    "dateCreated": film.year ? film.year.toString() : undefined,
-    "url": `https://www.primepickentertainment.com/films/${film.slug || film.id}`
-  } : null;
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.primepickentertainment.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Films",
+          "item": "https://www.primepickentertainment.com/films"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": film.title,
+          "item": `https://www.primepickentertainment.com/films/${film.slug || film.id}`
+        }
+      ]
+    }
+  ] : null;
 
   return (
     <>

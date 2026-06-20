@@ -3,7 +3,11 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { ChairCanvas } from "@/components/3d/ChairCanvas";
+import dynamic from "next/dynamic";
+
+const ChairCanvas = dynamic(() => import("@/components/3d/ChairCanvas").then(mod => mod.ChairCanvas), {
+  ssr: false,
+});
 
 export function Hero() {
   const containerVariants = {

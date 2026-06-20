@@ -29,8 +29,8 @@ export function FilmCard({ film }: FilmCardProps) {
             src={film.posterUrl}
             alt={film.title ? `${film.title} - Official Short Film Poster` : "Prime Pick Entertainment Film Poster"}
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
             className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-            unoptimized
           />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-[#EAEAEA] to-[#D4D4D4] flex items-center justify-center p-6 text-center">

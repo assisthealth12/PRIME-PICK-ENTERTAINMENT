@@ -27,7 +27,6 @@ export function Footer() {
                   className="object-contain"
                   sizes="40px"
                   quality={100}
-                  unoptimized
                 />
               </div>
               <div className="flex flex-col">
