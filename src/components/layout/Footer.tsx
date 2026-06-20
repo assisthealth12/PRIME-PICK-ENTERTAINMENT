@@ -36,7 +36,7 @@ export function Footer() {
             </Link>
             
             <p className="text-white/80 text-sm leading-relaxed">
-              A premium YouTube-first film production house that discovers directors, produces independent films, and showcases cinematic storytelling.
+              Empowering filmmakers through unique creative concepts, showcasing diverse perspectives and producing original stories that connect audiences.
             </p>
             
             <div className="flex flex-col gap-1 mt-2">
