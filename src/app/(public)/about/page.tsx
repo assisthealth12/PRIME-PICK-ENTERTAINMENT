@@ -1,3 +1,13 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Us",
+  description: "Learn about Prime Pick Entertainment's mission to discover emerging talent and produce original multilingual short films.",
+  alternates: {
+    canonical: "/about",
+  },
+};
+
 export default function AboutPage() {
   return (
     <div className="pt-24 pb-32 min-h-screen">

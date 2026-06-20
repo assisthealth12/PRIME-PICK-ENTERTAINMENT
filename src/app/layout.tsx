@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Cormorant_Garamond } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({
@@ -21,44 +22,6 @@ export const metadata: Metadata = {
     template: "%s | Prime Pick Entertainment",
   },
   description: "Prime Pick Entertainment is a Bangalore-based multilingual production house creating original Telugu, Kannada and Tamil short films.",
-  keywords: [
-    "Telugu Short Film Production Company",
-    "Kannada Short Film Production Company",
-    "Tamil Short Film Production Company",
-    "South Indian Short Film Production House",
-    "Multilingual Film Production Company",
-    "Independent Film Production House India",
-    "Short Film Makers in Bangalore",
-    "Film Production House in Bangalore",
-    "Telugu Short Film Production Company in Bangalore",
-    "Kannada Short Film Production Company in Bangalore",
-    "Tamil Short Film Production Company in Bangalore",
-    "South Indian Film Production House in Bangalore",
-    "Independent Filmmakers in Bangalore",
-    "Video Production Company Bangalore",
-    "Creative Production House Bengaluru",
-    "Telugu Short Film Production Services",
-    "Telugu Script Writing Services",
-    "Telugu Casting Agency Bangalore",
-    "Telugu Film Production House",
-    "Kannada Short Film Production Services",
-    "Kannada Script Development",
-    "Kannada Casting Services",
-    "Kannada Independent Film Production",
-    "Tamil Short Film Production Services",
-    "Tamil Script Writing Services",
-    "Tamil Casting Services Bangalore",
-    "Tamil Independent Film Production",
-    "Best Telugu Short Film Production Company in Bangalore",
-    "Affordable Kannada Short Film Production House",
-    "Tamil Short Film Makers in Bangalore",
-    "Multilingual Film Production Services India",
-    "End-to-End Short Film Production Services",
-    "Festival Ready Short Film Production Company",
-    "Low Budget Short Film Production Bangalore",
-    "OTT Ready Short Film Production Services",
-    "Short Film Production for YouTube Creators"
-  ],
   openGraph: {
     type: "website",
     locale: "en_IN",
@@ -120,6 +83,25 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${cormorant.variable} antialiased bg-background text-text-primary`}
     >
+      <head>
+        {/* Google Analytics */}
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=G-EGW8W4GC7J`}
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-EGW8W4GC7J');
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col">
         {/* Injecting Structured Data into the DOM */}
         <script

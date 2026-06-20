@@ -27,7 +27,7 @@ export function FilmCard({ film }: FilmCardProps) {
         {film.posterUrl ? (
           <Image 
             src={film.posterUrl}
-            alt={film.title || "Film Poster"}
+            alt={film.title ? `${film.title} - Official Short Film Poster` : "Prime Pick Entertainment Film Poster"}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
             unoptimized
