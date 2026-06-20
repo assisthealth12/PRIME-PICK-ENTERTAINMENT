@@ -55,7 +55,7 @@ export function Footer() {
                   {[
                     { label: "Films", href: "/films" },
                     { label: "Directors", href: "/directors" },
-                    { label: "Behind The Scenes", href: "/bts" }
+                    { label: "Challenge Series", href: "/challenges" }
                   ].map((link) => (
                     <div key={link.label} className="flex items-center gap-3">
                       <div className="h-4 w-[2px] bg-[#D4AF37]"></div>

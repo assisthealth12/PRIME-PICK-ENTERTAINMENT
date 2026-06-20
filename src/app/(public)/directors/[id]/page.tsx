@@ -134,7 +134,7 @@ export default function DirectorDetailsPage() {
                   alt={director.name}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  unoptimized
+                  sizes="320px"
                   priority
                 />
               ) : (
@@ -219,7 +219,7 @@ export default function DirectorDetailsPage() {
                         alt={film.title || "Film Poster"}
                         fill
                         className="object-cover"
-                        unoptimized
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       />
                     ) : (
                       <div className="absolute inset-0 bg-gradient-to-br from-background-secondary to-background flex items-center justify-center p-6 text-center">

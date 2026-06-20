@@ -55,7 +55,7 @@ export function Navigation() {
     { label: "Home", href: "/" },
     { label: "Films", href: "/films" },
     { label: "Directors", href: "/directors" },
-    { label: "Behind The Scenes", href: "/bts" },
+    { label: "Challenge Series", href: "/challenges" },
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ];
@@ -80,7 +80,7 @@ export function Navigation() {
                 className="object-contain object-left"
                 sizes="160px"
                 quality={100}
-                unoptimized
+                priority
               />
             </div>
           </Link>

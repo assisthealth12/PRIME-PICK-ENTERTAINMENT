@@ -1,27 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { useParams, useRouter } from "next/navigation";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Play } from "lucide-react";
+import { ArrowLeft, Play, Info, Check, Share2, Award, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
+import { ChallengeData, ChallengeFilm } from "@/components/admin/ChallengeFormModal";
 
-interface Film {
-  id: string;
-  title: string;
-  directorName: string;
-  posterUrl?: string;
-  youtubeLink?: string;
-  videoType?: string;
-  synopsis?: string;
-  cast?: string[];
-  genre?: string;
-  year?: number;
-  language?: string;
-}
+const slugify = (text: string) => {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+};
 
 function getYouTubeId(url: string): string | null {
   if (!url) return null;
@@ -39,38 +30,66 @@ const fadeUp = {
   }),
 };
 
-export default function FilmDetailsPage() {
+export default function ChallengeFilmDetailsPage() {
   const params = useParams();
-  const [film, setFilm] = useState<Film | null>(null);
+  const router = useRouter();
+  const seriesSlug = params.slug as string;
+  const filmId = params.filmId as string;
+
+  const [film, setFilm] = useState<ChallengeFilm | null>(null);
+  const [challengeInfo, setChallengeInfo] = useState<{ seriesName: string, season: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [playing, setPlaying] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const fetchFilm = async () => {
-      if (!params.id) return;
       try {
-        const docRef = doc(db, "films", params.id as string);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setFilm({ id: docSnap.id, ...docSnap.data() } as Film);
-        } else {
-          const q = query(collection(db, "films"), where("slug", "==", params.id as string));
-          const querySnapshot = await getDocs(q);
-          if (!querySnapshot.empty) {
-            const slugDoc = querySnapshot.docs[0];
-            setFilm({ id: slugDoc.id, ...slugDoc.data() } as Film);
+        const q = query(collection(db, "challenges"), where("visibility", "==", "Publish"));
+        const querySnapshot = await getDocs(q);
+        const allData = querySnapshot.docs.map(doc => doc.data() as ChallengeData);
+
+        // Filter by slug
+        const seriesData = allData.filter(c => slugify(c.seriesName) === seriesSlug);
+        
+        let foundFilm: ChallengeFilm | null = null;
+        let foundChallenge = null;
+
+        for (const c of seriesData) {
+          const f = c.films?.find(film => film.id === filmId);
+          if (f) {
+            foundFilm = f;
+            foundChallenge = { seriesName: c.seriesName, season: c.season };
+            break;
           }
         }
+
+        if (foundFilm) {
+          setFilm(foundFilm);
+          setChallengeInfo(foundChallenge);
+        }
       } catch (error) {
-        console.error("Error fetching film:", error);
+        console.error("Error fetching challenge film:", error);
       } finally {
         setLoading(false);
       }
     };
     fetchFilm();
-  }, [params.id]);
+  }, [seriesSlug, filmId]);
 
-  /* ── Loading ── */
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: film?.title,
+        url: window.location.href,
+      }).catch(console.error);
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -79,7 +98,6 @@ export default function FilmDetailsPage() {
     );
   }
 
-  /* ── Not found ── */
   if (!film) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background px-6 text-center">
@@ -87,20 +105,20 @@ export default function FilmDetailsPage() {
           Film Not Found
         </h1>
         <p className="text-text-secondary text-sm mb-8 max-w-md">
-          The film you are looking for doesn&apos;t exist or has been removed.
+          The film you are looking for doesn&apos;t exist or has been removed from this challenge.
         </p>
-        <Link
-          href="/films"
+        <button
+          onClick={() => router.push(`/challenges/${seriesSlug}`)}
           className="inline-flex items-center gap-2 border border-text-primary text-text-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] hover:bg-text-primary hover:text-background transition-all"
         >
-          <ArrowLeft size={14} /> Back to Films
-        </Link>
+          <ArrowLeft size={14} /> Back to Challenge
+        </button>
       </div>
     );
   }
 
   const ytId = film.youtubeLink ? getYouTubeId(film.youtubeLink) : null;
-  const videoLabel = film.videoType || "Trailer";
+  const videoLabel = film.videoType || "Short Film";
 
   return (
     <div className="min-h-screen bg-background">
@@ -111,10 +129,10 @@ export default function FilmDetailsPage() {
         {/* Back link — sits in the black area above the video */}
         <div className="absolute top-4 md:top-6 left-4 md:left-8 z-30">
           <Link
-            href="/films"
+            href={`/challenges/${seriesSlug}`}
             className="inline-flex items-center gap-2 text-white/60 hover:text-white text-[11px] font-bold uppercase tracking-[0.2em] transition-colors"
           >
-            <ArrowLeft size={14} /> Back
+            <ArrowLeft size={14} /> Back to {challengeInfo?.seriesName || 'Challenge'}
           </Link>
         </div>
 
@@ -127,7 +145,7 @@ export default function FilmDetailsPage() {
               className="absolute inset-0 w-full h-full cursor-pointer group"
             >
               <Image
-                src={`https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`}
+                src={film.posterUrl || `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`}
                 alt={film.title || "Video thumbnail"}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
@@ -289,14 +307,14 @@ export default function FilmDetailsPage() {
                     Synopsis
                     <span className="h-px flex-1 bg-border-subtle" />
                   </h3>
-                  <p className="text-text-secondary leading-[1.9] text-[15px] md:text-base max-w-2xl">
+                  <p className="text-text-secondary leading-[1.9] text-[15px] md:text-base max-w-2xl whitespace-pre-wrap">
                     {film.synopsis}
                   </p>
                 </motion.div>
               )}
 
               {/* Cast */}
-              {film.cast && film.cast.length > 0 && (
+              {film.cast && film.cast.length > 0 && film.cast.some(c => c.trim()) && (
                 <motion.div
                   custom={5}
                   variants={fadeUp}
@@ -309,12 +327,12 @@ export default function FilmDetailsPage() {
                     <span className="h-px flex-1 bg-border-subtle" />
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {film.cast.map((actor, idx) => (
+                    {film.cast.filter(c => c.trim()).map((actor, idx) => (
                       <span
                         key={idx}
                         className="bg-surface border border-border-subtle text-text-primary text-[11px] font-medium uppercase tracking-wider px-4 py-2 hover:border-accent/50 transition-colors"
                       >
-                        {actor}
+                        {actor.trim()}
                       </span>
                     ))}
                   </div>
@@ -354,10 +372,8 @@ export default function FilmDetailsPage() {
               className="lg:col-span-4 pb-16 md:pb-24"
             >
               <div className="lg:sticky lg:top-28 pt-0 lg:pt-14">
-                {/* Removed redundant poster image. The Film Details card will now sit cleanly at the top of the sidebar. */}
-
                 {/* Film details card */}
-                <div className="border border-border-subtle p-6 md:p-8 bg-surface">
+                <div className="border border-border-subtle p-6 md:p-8 bg-surface shadow-sm">
                   <h4 className="text-[10px] font-bold uppercase tracking-[0.25em] text-accent mb-6 flex items-center gap-3">
                     Film Details
                     <span className="h-px flex-1 bg-border-subtle" />
@@ -385,6 +401,12 @@ export default function FilmDetailsPage() {
                       <div className="flex justify-between items-center border-b border-border-subtle pb-3">
                         <dt className="text-text-secondary uppercase tracking-wider">Language</dt>
                         <dd className="text-text-primary font-medium">{film.language}</dd>
+                      </div>
+                    )}
+                    {film.runtime && (
+                      <div className="flex justify-between items-center border-b border-border-subtle pb-3">
+                        <dt className="text-text-secondary uppercase tracking-wider">Runtime</dt>
+                        <dd className="text-text-primary font-medium">{film.runtime}</dd>
                       </div>
                     )}
                     {film.videoType && (

@@ -66,7 +66,7 @@ export default function DirectorsPage() {
                       alt={dir.name}
                       fill
                       className="object-cover"
-                      unoptimized
+                      sizes="160px"
                     />
                   ) : (
                     <span className="font-heading text-5xl font-bold text-accent">

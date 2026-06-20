@@ -104,7 +104,7 @@ export function DirectorsHighlight() {
                       alt={dir.name}
                       fill
                       className="object-cover"
-                      unoptimized
+                      sizes="128px"
                     />
                   ) : (
                     <span className="font-heading text-4xl font-bold text-accent">

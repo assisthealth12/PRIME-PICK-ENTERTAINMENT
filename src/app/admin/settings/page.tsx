@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { db } from "@/lib/firebase/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { Settings as SettingsIcon, Plus, Trash2, Loader2, Save } from "lucide-react";
+import { ManageChallenges } from "@/components/admin/ManageChallenges";
 
 export default function SettingsAdmin() {
   const [languages, setLanguages] = useState<string[]>([]);
@@ -137,6 +138,9 @@ export default function SettingsAdmin() {
             </ul>
           )}
         </div>
+
+        {/* Challenges Panel */}
+        <ManageChallenges />
       </div>
     </div>
   );
