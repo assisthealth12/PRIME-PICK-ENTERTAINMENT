@@ -225,7 +225,7 @@ export function JournalFormModal({ journal, onClose, onSuccess }: JournalFormMod
             {/* Cover Upload */}
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5 text-gray-600">
-                Cover Image {journal?.id && existingCoverUrl && "(leave empty to keep)"}
+                Cover Image (4:5 Ratio, e.g. 1080x1350px) {journal?.id && existingCoverUrl && "(leave empty to keep)"}
               </label>
               {journal?.id && existingCoverUrl && !coverFile && (
                 <div className="mb-2 relative w-full h-24 border border-gray-200 overflow-hidden bg-gray-100">

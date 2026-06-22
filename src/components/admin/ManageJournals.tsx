@@ -156,8 +156,8 @@ export function ManageJournals() {
               </div>
 
               {/* Bottom Actions */}
-              <div className="border-t-2 border-gray-100 p-3 bg-gray-50 flex items-center justify-between">
-                <div className="flex gap-1 overflow-x-auto no-scrollbar pr-2 max-w-[50%]">
+              <div className="border-t-2 border-gray-100 p-3 bg-gray-50 flex items-start justify-between gap-4">
+                <div className="flex flex-wrap gap-1 flex-1">
                   {journal.tags?.map(t => (
                     <span key={t} className="text-[8px] bg-white border border-gray-200 px-1.5 py-0.5 whitespace-nowrap uppercase">
                       {t}
