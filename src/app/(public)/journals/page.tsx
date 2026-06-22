@@ -5,8 +5,8 @@ import { db } from "@/lib/firebase/config";
 import { collection, getDocs, query, orderBy, getDoc, doc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
-import { Loader2, FileText, BookOpen } from "lucide-react";
-import { motion } from "framer-motion";
+import { Loader2, FileText, BookOpen, Search, X, SlidersHorizontal } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { JournalData } from "@/components/admin/JournalFormModal";
 
 const fadeUp = {
@@ -23,11 +23,9 @@ export default function JournalsPage() {
   const [loading, setLoading] = useState(true);
 
   const [availableTypes, setAvailableTypes] = useState<string[]>([]);
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string>("All");
-  const [selectedTag, setSelectedTag] = useState<string>("All");
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -37,7 +35,6 @@ export default function JournalsPage() {
         if (docSnap.exists()) {
           const data = docSnap.data();
           if (data.types) setAvailableTypes(data.types);
-          if (data.tags) setAvailableTags(data.tags);
         }
       } catch (error) {
         console.error("Error fetching settings:", error);
@@ -67,12 +64,13 @@ export default function JournalsPage() {
 
   const filteredJournals = journals.filter(journal => {
     const matchesSearch = journal.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          journal.abstract.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          journal.authors.toLowerCase().includes(searchQuery.toLowerCase());
+      journal.abstract.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      journal.authors.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = selectedType === "All" || journal.type === selectedType;
-    const matchesTag = selectedTag === "All" || (journal.tags && journal.tags.includes(selectedTag));
-    return matchesSearch && matchesType && matchesTag;
+    return matchesSearch && matchesType;
   });
+
+  const hasActiveFilters = searchQuery !== "" || selectedType !== "All";
 
   return (
     <div className="min-h-screen bg-background pt-16 pb-32">
@@ -84,7 +82,7 @@ export default function JournalsPage() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="mb-16"
+          className="mb-12"
         >
           <span className="inline-block bg-accent text-black text-[10px] font-bold uppercase tracking-[0.2em] px-3 py-1 mb-5">
             Library
@@ -103,139 +101,205 @@ export default function JournalsPage() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="mb-12 border border-border-subtle bg-surface p-5 flex flex-col gap-4"
+          className="mb-10 border border-border-subtle bg-surface p-5 flex flex-col gap-4 sticky top-4 z-10 backdrop-blur-sm"
         >
-          <input
-            type="text"
-            placeholder="Search journals, authors, or topics..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-background border border-border-subtle py-3 px-4 text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent transition-colors font-body text-sm"
-          />
-          <div className="flex gap-4">
+          {/* Search row */}
+          <div className="flex items-center gap-3 bg-background border border-border-subtle px-4 py-3 focus-within:border-accent transition-colors">
+            <Search size={16} strokeWidth={2} className="text-text-secondary/60 shrink-0" />
+            <input
+              type="text"
+              placeholder="Search journals, authors, or topics..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-transparent text-text-primary placeholder-text-secondary text-sm font-body focus:outline-none"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                aria-label="Clear search"
+                className="text-text-secondary/60 hover:text-text-primary transition-colors cursor-pointer shrink-0"
+              >
+                <X size={14} strokeWidth={2} />
+              </button>
+            )}
+          </div>
+
+          {/* Filter row */}
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5 text-text-secondary/60 text-[10px] font-bold uppercase tracking-[0.15em] shrink-0">
+              <SlidersHorizontal size={12} strokeWidth={2} />
+              Type
+            </span>
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="flex-1 min-w-0 bg-background border border-border-subtle py-3 px-4 text-text-primary text-sm focus:outline-none focus:border-accent transition-colors cursor-pointer font-body"
+              className="flex-1 min-w-0 bg-background border border-border-subtle py-2.5 px-4 text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-colors cursor-pointer font-body"
             >
               <option value="All">All Types</option>
               {availableTypes.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
-            <select
-              value={selectedTag}
-              onChange={(e) => setSelectedTag(e.target.value)}
-              className="flex-1 min-w-0 bg-background border border-border-subtle py-3 px-4 text-text-primary text-sm focus:outline-none focus:border-accent transition-colors cursor-pointer font-body"
-            >
-              <option value="All">All Tags</option>
-              {availableTags.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
+            {hasActiveFilters && (
+              <button
+                onClick={() => { setSearchQuery(""); setSelectedType("All"); }}
+                className="shrink-0 flex items-center gap-1.5 text-text-secondary hover:text-accent text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer px-2 py-2.5"
+              >
+                <X size={12} strokeWidth={2.5} />
+                Reset
+              </button>
+            )}
           </div>
         </motion.div>
 
+        {/* ── Results count ── */}
+        {!loading && journals.length > 0 && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="text-text-secondary/70 text-xs font-body mb-6 -mt-2"
+          >
+            Showing <span className="font-bold text-text-primary">{filteredJournals.length}</span> of {journals.length} {journals.length === 1 ? "entry" : "entries"}
+          </motion.p>
+        )}
+
         {/* ── Content ── */}
         {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="w-9 h-9 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex flex-row h-40 border border-border-subtle bg-surface overflow-hidden"
+              >
+                <div className="relative w-32 sm:w-36 shrink-0 bg-border-subtle/40 animate-pulse" />
+                <div className="p-5 flex flex-col flex-1 justify-center gap-3 min-w-0">
+                  <div className="h-4 bg-border-subtle/40 animate-pulse rounded-sm w-4/5" />
+                  <div className="h-4 bg-border-subtle/40 animate-pulse rounded-sm w-3/5" />
+                  <div className="h-3 bg-border-subtle/30 animate-pulse rounded-sm w-2/5 mt-2" />
+                  <div className="flex gap-1.5 mt-auto pt-4">
+                    <div className="h-5 w-12 bg-border-subtle/30 animate-pulse rounded-sm" />
+                    <div className="h-5 w-12 bg-border-subtle/30 animate-pulse rounded-sm" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : filteredJournals.length === 0 ? (
-          <div className="text-center py-20 border border-border-subtle bg-surface">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center py-20 border border-border-subtle bg-surface"
+          >
             <FileText size={48} className="mx-auto text-text-secondary/30 mb-4" strokeWidth={1.5} />
-            <h3 className="font-heading text-xl text-text-primary font-bold mb-2 uppercase tracking-wider">No journals found</h3>
-            <p className="text-text-secondary text-sm mb-6">Try adjusting your filters or search query.</p>
-            <button
-              onClick={() => { setSearchQuery(""); setSelectedType("All"); setSelectedTag("All"); }}
-              className="inline-flex items-center gap-2 border border-text-primary text-text-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] hover:bg-text-primary hover:text-background transition-all cursor-pointer"
-            >
-              Clear Filters
-            </button>
-          </div>
-        ) : (
-          /* ── Instagram-style 4:5 Grid ── */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredJournals.map((journal, idx) => (
-              <motion.div
-                key={journal.id}
-                custom={idx + 2}
-                variants={fadeUp}
-                initial="hidden"
-                animate="visible"
-                className="h-full"
+            <h3 className="font-heading text-xl text-text-primary font-bold mb-2 uppercase tracking-wider">
+              {journals.length === 0 ? "Nothing here yet" : "No journals found"}
+            </h3>
+            <p className="text-text-secondary text-sm mb-6">
+              {journals.length === 0
+                ? "Check back soon for new research and publications."
+                : "Try adjusting your filters or search query."}
+            </p>
+            {journals.length > 0 && (
+              <button
+                onClick={() => { setSearchQuery(""); setSelectedType("All"); }}
+                className="inline-flex items-center gap-2 border border-text-primary text-text-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] hover:bg-text-primary hover:text-background transition-all cursor-pointer"
               >
-                <Link
-                  href={`/journals/${journal.id}`}
-                  className="group flex flex-col h-full border border-border-subtle bg-surface overflow-hidden hover:border-accent/40 hover:shadow-lg transition-all duration-300"
+                Clear Filters
+              </button>
+            )}
+          </motion.div>
+        ) : (
+          /* ── Horizontal Cards — 2 per row ── */
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <AnimatePresence mode="popLayout">
+              {filteredJournals.map((journal, idx) => (
+                <motion.div
+                  key={journal.id}
+                  custom={idx + 2}
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.2 } }}
+                  layout
+                  className="h-full"
                 >
-                  {/* 4:5 Cover Image (Instagram ratio) - No text overlay */}
-                  <div className="relative w-full overflow-hidden bg-background shrink-0" style={{ aspectRatio: "4/5" }}>
-                    {journal.coverImage ? (
-                      <Image
-                        src={journal.coverImage}
-                        alt={journal.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-700"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        unoptimized
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <BookOpen className="text-text-secondary/15" size={48} />
-                      </div>
-                    )}
+                  <Link
+                    href={`/journals/${journal.id}`}
+                    className="group flex flex-row h-full border border-border-subtle bg-surface overflow-hidden hover:border-accent hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                  >
+                    {/* Left: Cover Image */}
+                    <div className="relative w-32 sm:w-36 h-40 shrink-0 bg-black overflow-hidden">
+                      {journal.coverImage ? (
+                        <Image
+                          src={journal.coverImage}
+                          alt={journal.title}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          sizes="150px"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <BookOpen className="text-white/20" size={32} />
+                        </div>
+                      )}
 
-                    {/* Type badge - Still on top of image */}
-                    <div className="absolute top-4 left-4">
-                      <span className="bg-accent text-black text-[9px] font-bold uppercase tracking-[0.15em] px-2.5 py-1">
+                    </div>
+
+                    {/* Right: Content */}
+                    <div className="p-5 flex flex-col flex-1 justify-center min-w-0">
+                      <span className="text-accent text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5 block">
                         {journal.type}
                       </span>
-                    </div>
-                  </div>
+                      <h2 className="font-heading text-lg md:text-xl font-bold text-black leading-snug mb-3 line-clamp-2 group-hover:text-accent transition-colors duration-300">
+                        {journal.title}
+                      </h2>
 
-                  {/* Content below the image */}
-                  <div className="p-5 flex flex-col flex-1">
-                    <h2 className="font-heading text-lg md:text-xl font-bold text-text-primary uppercase tracking-wider leading-tight line-clamp-2 mb-3 group-hover:text-accent transition-colors">
-                      {journal.title}
-                    </h2>
-                    
-                    <div className="flex flex-col gap-1 mb-4">
-                      <span className="text-[10px] uppercase tracking-[0.15em] text-text-secondary">
-                        By <span className="text-text-primary font-bold">{journal.authors}</span>
-                      </span>
-                      <span className="text-[10px] uppercase tracking-[0.15em] text-text-secondary/60">
-                        {journal.publishDate}
-                      </span>
-                    </div>
-
-                    {/* Spacer to push tags to bottom if title is short */}
-                    <div className="flex-1" />
-
-                    {/* Bottom bar with tags */}
-                    <div className="flex items-center justify-between gap-3 pt-4 border-t border-border-subtle">
-                      <div className="flex flex-wrap gap-1.5 flex-1 min-w-0">
-                        {journal.tags?.slice(0, 2).map(tag => (
-                          <span
-                            key={tag}
-                            className="border border-border-subtle text-text-secondary text-[8px] font-medium uppercase tracking-widest px-2 py-0.5"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                        {journal.tags && journal.tags.length > 2 && (
-                          <span className="text-[8px] text-text-secondary/50 uppercase tracking-widest px-1 py-0.5">
-                            +{journal.tags.length - 2}
-                          </span>
-                        )}
+                      <div className="flex flex-col gap-1 mb-4 border-l-2 border-accent pl-3">
+                        <span className="text-xs text-gray-600 font-body truncate">
+                          By <span className="text-black font-bold">{journal.authors}</span>
+                        </span>
+                        <span className="text-[10px] text-gray-400 font-body">
+                          {journal.publishDate}
+                        </span>
                       </div>
 
-                      {journal.pdfUrl && (
-                        <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-accent shrink-0 flex items-center gap-1">
-                          <FileText size={10} /> PDF
-                        </span>
-                      )}
+                      {/* Bottom bar with tags */}
+                      <div className="flex items-center justify-between gap-3 pt-4 border-t border-gray-100 mt-auto">
+                        <div className="flex flex-wrap gap-1.5 flex-1 min-w-0">
+                          {journal.tags?.slice(0, 2).map(tag => (
+                            <span
+                              key={tag}
+                              className="bg-gray-50 border border-gray-200 text-gray-500 text-[9px] uppercase tracking-wider px-2 py-1 rounded-sm whitespace-nowrap"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                          {journal.tags && journal.tags.length > 2 && (
+                            <span className="bg-gray-50 border border-gray-200 text-gray-400 text-[9px] uppercase tracking-wider px-2 py-1 rounded-sm whitespace-nowrap">
+                              +{journal.tags.length - 2}
+                            </span>
+                          )}
+                        </div>
+
+                        {journal.pdfUrl && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              window.open(journal.pdfUrl, "_blank", "noopener,noreferrer");
+                            }}
+                            className="shrink-0 flex items-center gap-1.5 bg-black text-white px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest hover:bg-accent hover:text-black transition-colors rounded-sm cursor-pointer"
+                          >
+                            <FileText size={10} /> PDF
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+                  </Link>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         )}
       </div>
