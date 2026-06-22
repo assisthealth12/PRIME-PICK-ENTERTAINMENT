@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { db } from "@/lib/firebase/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { Plus, Trash2, Loader2, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, Trash2, Loader2, ChevronDown, ChevronRight, Pencil, Check, X } from "lucide-react";
 
 export interface ChallengeSeriesSetting {
   name: string;
@@ -16,6 +16,14 @@ export function ManageChallenges() {
   const [loading, setLoading] = useState(true);
   const [expandedSeries, setExpandedSeries] = useState<string | null>(null);
   const [newSeasonNames, setNewSeasonNames] = useState<Record<string, string>>({});
+
+  // Edit state for series name
+  const [editingSeriesIdx, setEditingSeriesIdx] = useState<number | null>(null);
+  const [editingSeriesValue, setEditingSeriesValue] = useState("");
+
+  // Edit state for season name
+  const [editingSeason, setEditingSeason] = useState<{ seriesIdx: number; seasonIdx: number } | null>(null);
+  const [editingSeasonValue, setEditingSeasonValue] = useState("");
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -100,6 +108,61 @@ export function ManageChallenges() {
     await saveToDb(updated);
   };
 
+  // ── Edit Series Name ──
+  const startEditSeries = (idx: number) => {
+    setEditingSeriesIdx(idx);
+    setEditingSeriesValue(seriesList[idx].name);
+  };
+
+  const cancelEditSeries = () => {
+    setEditingSeriesIdx(null);
+    setEditingSeriesValue("");
+  };
+
+  const saveEditSeries = async (idx: number) => {
+    const trimmed = editingSeriesValue.trim();
+    if (!trimmed) return;
+    const duplicate = seriesList.some((s, i) => i !== idx && s.name.toLowerCase() === trimmed.toLowerCase());
+    if (duplicate) { alert("This series name already exists!"); return; }
+    const oldName = seriesList[idx].name;
+    const updated = [...seriesList];
+    updated[idx] = { ...updated[idx], name: trimmed };
+    setSeriesList(updated);
+    if (expandedSeries === oldName) setExpandedSeries(trimmed);
+    setEditingSeriesIdx(null);
+    setEditingSeriesValue("");
+    await saveToDb(updated);
+  };
+
+  // ── Edit Season Name ──
+  const startEditSeason = (seriesIdx: number, seasonIdx: number) => {
+    setEditingSeason({ seriesIdx, seasonIdx });
+    setEditingSeasonValue(seriesList[seriesIdx].seasons[seasonIdx]);
+  };
+
+  const cancelEditSeason = () => {
+    setEditingSeason(null);
+    setEditingSeasonValue("");
+  };
+
+  const saveEditSeason = async () => {
+    if (!editingSeason) return;
+    const trimmed = editingSeasonValue.trim();
+    if (!trimmed) return;
+    const { seriesIdx, seasonIdx } = editingSeason;
+    const series = seriesList[seriesIdx];
+    const duplicate = series.seasons.some((s, i) => i !== seasonIdx && s.toLowerCase() === trimmed.toLowerCase());
+    if (duplicate) { alert("This season already exists!"); return; }
+    const updatedSeasons = [...series.seasons];
+    updatedSeasons[seasonIdx] = trimmed;
+    const updated = [...seriesList];
+    updated[seriesIdx] = { ...series, seasons: updatedSeasons };
+    setSeriesList(updated);
+    setEditingSeason(null);
+    setEditingSeasonValue("");
+    await saveToDb(updated);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-10">
@@ -129,7 +192,7 @@ export function ManageChallenges() {
         <button
           type="submit"
           disabled={!newSeriesName.trim()}
-          className="bg-black text-white px-4 py-2.5 flex items-center justify-center hover:bg-gray-800 transition-colors disabled:opacity-50"
+          className="bg-black text-white px-4 py-2.5 flex items-center justify-center hover:bg-gray-800 transition-colors disabled:opacity-50 cursor-pointer"
         >
           <Plus size={20} />
         </button>
@@ -150,20 +213,46 @@ export function ManageChallenges() {
                   className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-100 transition-colors"
                   onClick={() => setExpandedSeries(isExpanded ? null : series.name)}
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
                     {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                    <span className="font-bold text-sm uppercase tracking-wider">{series.name}</span>
+                    {editingSeriesIdx === idx ? (
+                      <form onSubmit={(e) => { e.preventDefault(); saveEditSeries(idx); }} className="flex items-center gap-2 flex-1" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="text"
+                          value={editingSeriesValue}
+                          onChange={(e) => setEditingSeriesValue(e.target.value)}
+                          className="flex-1 border-2 border-black p-1 text-sm outline-none"
+                          autoFocus
+                        />
+                        <button type="submit" className="text-green-600 hover:text-green-800 transition-colors cursor-pointer" title="Save">
+                          <Check size={16} />
+                        </button>
+                        <button type="button" onClick={cancelEditSeries} className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer" title="Cancel">
+                          <X size={16} />
+                        </button>
+                      </form>
+                    ) : (
+                      <span className="font-bold text-sm uppercase tracking-wider">{series.name}</span>
+                    )}
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveSeries(series.name);
-                    }}
-                    className="text-gray-400 hover:text-red-500 transition-colors p-1"
-                    title="Remove Series"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  {editingSeriesIdx !== idx && (
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); startEditSeries(idx); }}
+                        className="text-gray-400 hover:text-black transition-colors p-1 cursor-pointer"
+                        title="Edit Series Name"
+                      >
+                        <Pencil size={14} />
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleRemoveSeries(series.name); }}
+                        className="text-gray-400 hover:text-red-500 transition-colors p-1 cursor-pointer"
+                        title="Remove Series"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Seasons List (Expanded State) */}
@@ -177,13 +266,43 @@ export function ManageChallenges() {
                       <ul className="space-y-2 mb-3">
                         {series.seasons.map((season, sIdx) => (
                           <li key={sIdx} className="flex items-center justify-between bg-gray-50 border border-gray-200 p-2 text-xs">
-                            <span className="uppercase tracking-wider font-semibold">{season}</span>
-                            <button
-                              onClick={() => handleRemoveSeason(series.name, season)}
-                              className="text-gray-400 hover:text-red-500 transition-colors"
-                            >
-                              <Trash2 size={14} />
-                            </button>
+                            {editingSeason?.seriesIdx === idx && editingSeason?.seasonIdx === sIdx ? (
+                              <form onSubmit={(e) => { e.preventDefault(); saveEditSeason(); }} className="flex items-center gap-2 flex-1 mr-2">
+                                <input
+                                  type="text"
+                                  value={editingSeasonValue}
+                                  onChange={(e) => setEditingSeasonValue(e.target.value)}
+                                  className="flex-1 border-2 border-black p-1 text-xs outline-none"
+                                  autoFocus
+                                />
+                                <button type="submit" className="text-green-600 hover:text-green-800 transition-colors cursor-pointer" title="Save">
+                                  <Check size={14} />
+                                </button>
+                                <button type="button" onClick={cancelEditSeason} className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer" title="Cancel">
+                                  <X size={14} />
+                                </button>
+                              </form>
+                            ) : (
+                              <>
+                                <span className="uppercase tracking-wider font-semibold">{season}</span>
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => startEditSeason(idx, sIdx)}
+                                    className="text-gray-400 hover:text-black transition-colors cursor-pointer"
+                                    title="Edit Season"
+                                  >
+                                    <Pencil size={12} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleRemoveSeason(series.name, season)}
+                                    className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                                    title="Remove Season"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                              </>
+                            )}
                           </li>
                         ))}
                       </ul>
@@ -202,7 +321,7 @@ export function ManageChallenges() {
                       <button
                         type="submit"
                         disabled={!newSeasonNames[series.name]?.trim()}
-                        className="bg-gray-200 text-black px-2 flex items-center justify-center hover:bg-gray-300 transition-colors disabled:opacity-50"
+                        className="bg-gray-200 text-black px-2 flex items-center justify-center hover:bg-gray-300 transition-colors disabled:opacity-50 cursor-pointer"
                       >
                         <Plus size={16} />
                       </button>

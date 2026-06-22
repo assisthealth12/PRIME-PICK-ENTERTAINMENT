@@ -3,13 +3,16 @@
 import { useState, useEffect } from "react";
 import { db } from "@/lib/firebase/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { Settings as SettingsIcon, Plus, Trash2, Loader2, Save } from "lucide-react";
+import { Settings as SettingsIcon, Plus, Trash2, Loader2, Pencil, Check, X } from "lucide-react";
 import { ManageChallenges } from "@/components/admin/ManageChallenges";
+import { ManageJournalsSettings } from "@/components/admin/ManageJournalsSettings";
 
 export default function SettingsAdmin() {
   const [languages, setLanguages] = useState<string[]>([]);
   const [newLanguage, setNewLanguage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [editingLangIdx, setEditingLangIdx] = useState<number | null>(null);
+  const [editingLangValue, setEditingLangValue] = useState("");
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -41,12 +44,8 @@ export default function SettingsAdmin() {
     e.preventDefault();
     const trimmed = newLanguage.trim();
     if (trimmed) {
-      // Capitalize first letter and lowercase the rest
       const capitalized = trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
-      
-      // Case-insensitive duplicate check
       const exists = languages.some(lang => lang.toLowerCase() === capitalized.toLowerCase());
-      
       if (!exists) {
         const updated = [...languages, capitalized];
         setLanguages(updated);
@@ -62,6 +61,33 @@ export default function SettingsAdmin() {
   const handleRemoveLanguage = async (langToRemove: string) => {
     const updated = languages.filter(lang => lang !== langToRemove);
     setLanguages(updated);
+    await saveLanguagesToDb(updated);
+  };
+
+  const startEditLanguage = (idx: number) => {
+    setEditingLangIdx(idx);
+    setEditingLangValue(languages[idx]);
+  };
+
+  const cancelEditLanguage = () => {
+    setEditingLangIdx(null);
+    setEditingLangValue("");
+  };
+
+  const saveEditLanguage = async (idx: number) => {
+    const trimmed = editingLangValue.trim();
+    if (!trimmed) return;
+    const capitalized = trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+    const duplicate = languages.some((lang, i) => i !== idx && lang.toLowerCase() === capitalized.toLowerCase());
+    if (duplicate) {
+      alert("This language already exists!");
+      return;
+    }
+    const updated = [...languages];
+    updated[idx] = capitalized;
+    setLanguages(updated);
+    setEditingLangIdx(null);
+    setEditingLangValue("");
     await saveLanguagesToDb(updated);
   };
 
@@ -108,7 +134,7 @@ export default function SettingsAdmin() {
             <button
               type="submit"
               disabled={!newLanguage.trim()}
-              className="bg-black text-white px-4 py-2.5 flex items-center justify-center hover:bg-gray-800 transition-colors disabled:opacity-50"
+              className="bg-black text-white px-4 py-2.5 flex items-center justify-center hover:bg-gray-800 transition-colors disabled:opacity-50 cursor-pointer"
             >
               <Plus size={20} />
             </button>
@@ -125,14 +151,43 @@ export default function SettingsAdmin() {
                   key={idx}
                   className="flex items-center justify-between border-2 border-gray-100 bg-gray-50 p-3 hover:border-black transition-colors"
                 >
-                  <span className="font-bold text-sm uppercase tracking-wider">{lang}</span>
-                  <button
-                    onClick={() => handleRemoveLanguage(lang)}
-                    className="text-gray-400 hover:text-red-500 transition-colors"
-                    title="Remove Language"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  {editingLangIdx === idx ? (
+                    <form onSubmit={(e) => { e.preventDefault(); saveEditLanguage(idx); }} className="flex items-center gap-2 flex-1 mr-2">
+                      <input
+                        type="text"
+                        value={editingLangValue}
+                        onChange={(e) => setEditingLangValue(e.target.value)}
+                        className="flex-1 border-2 border-black p-1.5 text-sm outline-none"
+                        autoFocus
+                      />
+                      <button type="submit" className="text-green-600 hover:text-green-800 transition-colors cursor-pointer" title="Save">
+                        <Check size={16} />
+                      </button>
+                      <button type="button" onClick={cancelEditLanguage} className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer" title="Cancel">
+                        <X size={16} />
+                      </button>
+                    </form>
+                  ) : (
+                    <>
+                      <span className="font-bold text-sm uppercase tracking-wider">{lang}</span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => startEditLanguage(idx)}
+                          className="text-gray-400 hover:text-black transition-colors cursor-pointer"
+                          title="Edit Language"
+                        >
+                          <Pencil size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleRemoveLanguage(lang)}
+                          className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                          title="Remove Language"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </li>
               ))}
             </ul>
@@ -142,6 +197,8 @@ export default function SettingsAdmin() {
         {/* Challenges Panel */}
         <ManageChallenges />
       </div>
+
+      <ManageJournalsSettings />
     </div>
   );
 }

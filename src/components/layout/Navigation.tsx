@@ -56,6 +56,7 @@ export function Navigation() {
     { label: "Films", href: "/films" },
     { label: "Directors", href: "/directors" },
     { label: "Challenge Series", href: "/challenges" },
+    { label: "Journals", href: "/journals" },
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ];
