@@ -63,10 +63,15 @@ export default function JournalsPage() {
   }, []);
 
   const filteredJournals = journals.filter(journal => {
-    const matchesSearch = journal.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      journal.abstract.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      journal.authors.toLowerCase().includes(searchQuery.toLowerCase());
+    const query = searchQuery.toLowerCase();
+    const matchesSearch = 
+      (journal.title || "").toLowerCase().includes(query) ||
+      (journal.abstract || "").toLowerCase().includes(query) ||
+      (journal.authors || "").toLowerCase().includes(query) ||
+      (journal.tags || []).some(tag => tag.toLowerCase().includes(query));
+      
     const matchesType = selectedType === "All" || journal.type === selectedType;
+    
     return matchesSearch && matchesType;
   });
 
