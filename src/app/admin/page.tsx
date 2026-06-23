@@ -15,17 +15,19 @@ export default function AdminDashboard() {
     directors: 0,
     challenges: 0,
     journals: 0,
+    brands: 0,
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCounts = async () => {
       try {
-        const [filmsSnap, directorsSnap, challengesSnap, journalsSnap] = await Promise.all([
+        const [filmsSnap, directorsSnap, challengesSnap, journalsSnap, brandsSnap] = await Promise.all([
           getCountFromServer(collection(db, "films")),
           getCountFromServer(collection(db, "directors")),
           getCountFromServer(collection(db, "challenges")),
           getCountFromServer(collection(db, "journals")),
+          getCountFromServer(collection(db, "brands")),
         ]);
 
         setCounts({
@@ -33,6 +35,7 @@ export default function AdminDashboard() {
           directors: directorsSnap.data().count,
           challenges: challengesSnap.data().count,
           journals: journalsSnap.data().count,
+          brands: brandsSnap.data().count,
         });
       } catch (error) {
         console.error("Failed to fetch counts", error);
@@ -134,6 +137,23 @@ export default function AdminDashboard() {
               </div>
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors duration-300">
                 <span>Manage Research</span>
+                <ArrowRight size={16} strokeWidth={2} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+              </div>
+            </div>
+          </Link>
+
+          {/* Brands Card */}
+          <Link href="/admin/brands" className="group border-2 border-black p-8 hover:bg-black transition-colors duration-300 flex flex-col h-64 cursor-pointer relative">
+            <div className="flex justify-between items-start group-hover:text-white transition-colors duration-300">
+              <h2 className="text-xl font-bold uppercase tracking-widest">Brands</h2>
+              <Trophy size={28} strokeWidth={1.5} className="rotate-180" />
+            </div>
+            <div className="mt-auto group-hover:text-white transition-colors duration-300">
+              <div className="text-8xl font-black leading-none tracking-tighter mb-2">
+                {counts.brands}
+              </div>
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors duration-300">
+                <span>Manage Partners</span>
                 <ArrowRight size={16} strokeWidth={2} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
               </div>
             </div>

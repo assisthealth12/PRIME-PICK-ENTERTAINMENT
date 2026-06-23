@@ -1,6 +1,7 @@
 import { Hero } from "@/components/home/Hero";
 import { FeaturedFilms } from "@/components/home/FeaturedFilms";
 import { DirectorsHighlight } from "@/components/home/DirectorsHighlight";
+import { BrandMarquee } from "@/components/home/BrandMarquee";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export default function Home() {
       <Hero />
       <FeaturedFilms />
       <DirectorsHighlight />
+      <BrandMarquee />
     </div>
   );
 }
