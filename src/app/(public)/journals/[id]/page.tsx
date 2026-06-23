@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { db } from "@/lib/firebase/config";
 import { doc, getDoc } from "firebase/firestore";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, FileText } from "lucide-react";
+import { ArrowLeft, ExternalLink, FileText, Share2, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { JournalData } from "@/components/admin/JournalFormModal";
 
@@ -22,6 +22,34 @@ export default function JournalDetailPage() {
   const params = useParams();
   const [journal, setJournal] = useState<JournalData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    const title = journal?.title || "Prime Pick Entertainment";
+    const text = journal?.abstract || "Check out this journal!";
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text,
+          url,
+        });
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error("Failed to copy:", err);
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchJournal = async () => {
@@ -76,13 +104,22 @@ export default function JournalDetailPage() {
     <div className="min-h-screen bg-background pt-24 pb-32">
       <div className="container mx-auto px-4 md:px-8 max-w-5xl">
         
-        {/* Back Link */}
-        <Link
-          href="/journals"
-          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary text-[11px] font-bold uppercase tracking-[0.2em] transition-colors mb-12"
-        >
-          <ArrowLeft size={14} /> Back to Library
-        </Link>
+        {/* Header Actions */}
+        <div className="flex items-center justify-between mb-12">
+          <Link
+            href="/journals"
+            className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary text-[11px] font-bold uppercase tracking-[0.2em] transition-colors"
+          >
+            <ArrowLeft size={14} /> Back to Library
+          </Link>
+          <button
+            onClick={handleShare}
+            className="inline-flex items-center gap-2 text-text-primary hover:text-accent text-[11px] font-bold uppercase tracking-[0.2em] transition-colors"
+          >
+            {copied ? <Check size={14} className="text-green-500" /> : <Share2 size={14} />}
+            {copied ? "Copied!" : "Share Journal"}
+          </button>
+        </div>
 
         {/* ================================================================ */}
         {/* SECTION 1 — HEADER (No Image)                                    */}
