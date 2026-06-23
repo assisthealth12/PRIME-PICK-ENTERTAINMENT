@@ -26,14 +26,10 @@ export default function JournalDetailPage() {
 
   const handleShare = async () => {
     const url = window.location.href;
-    const title = journal?.title || "Prime Pick Entertainment";
-    const text = journal?.abstract || "Check out this journal!";
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title,
-          text,
           url,
         });
       } catch (err) {

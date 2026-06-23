@@ -5,7 +5,7 @@ import { db } from "@/lib/firebase/config";
 import { collection, getDocs, query, orderBy, getDoc, doc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
-import { Loader2, FileText, BookOpen, Search, X, SlidersHorizontal } from "lucide-react";
+import { Loader2, FileText, BookOpen, Search, X, SlidersHorizontal, Share2, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { JournalData } from "@/components/admin/JournalFormModal";
 
@@ -26,6 +26,30 @@ export default function JournalsPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string>("All");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleShare = async (e: React.MouseEvent, journalId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const url = `${window.location.origin}/journals/${journalId}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ url });
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        setCopiedId(journalId);
+        setTimeout(() => setCopiedId(null), 2000);
+      } catch (err) {
+        console.error("Failed to copy:", err);
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -233,7 +257,7 @@ export default function JournalsPage() {
                     className="group flex flex-row h-full border border-border-subtle bg-surface overflow-hidden hover:border-accent hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
                   >
                     {/* Left: Cover Image */}
-                    <div className="relative w-32 sm:w-36 h-40 shrink-0 bg-black overflow-hidden">
+                    <div className="relative w-32 sm:w-36 h-40 shrink-0 bg-black overflow-hidden group/image">
                       {journal.coverImage ? (
                         <Image
                           src={journal.coverImage}
@@ -248,7 +272,15 @@ export default function JournalsPage() {
                           <BookOpen className="text-white/20" size={32} />
                         </div>
                       )}
-
+                      
+                      {/* Share Button Overlay */}
+                      <button
+                        onClick={(e) => handleShare(e, journal.id)}
+                        className="absolute top-2 right-2 bg-black/50 hover:bg-accent text-white hover:text-black p-1.5 rounded-full backdrop-blur-sm opacity-0 group-hover/image:opacity-100 transition-all duration-300"
+                        title="Share Journal"
+                      >
+                        {copiedId === journal.id ? <Check size={14} /> : <Share2 size={14} />}
+                      </button>
                     </div>
 
                     {/* Right: Content */}
