@@ -28,9 +28,11 @@ export default function JournalsPage() {
   const [selectedType, setSelectedType] = useState<string>("All");
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const handleShare = async (e: React.MouseEvent, journalId: string) => {
+  const handleShare = async (e: React.MouseEvent, journalId?: string) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    if (!journalId) return;
     
     const url = `${window.location.origin}/journals/${journalId}`;
 
