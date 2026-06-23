@@ -87,27 +87,27 @@ export function BrandMarquee() {
                   rel="noopener" 
                   title={`Visit ${brand.name} - Official Partner of Prime Pick Entertainment`}
                   aria-label={`Visit the official website of ${brand.name}`}
-                  className="block relative h-12 w-32 md:w-40 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 flex items-center justify-center"
+                  className="block relative h-24 w-48 md:h-32 md:w-64 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 flex items-center justify-center"
                 >
                   <Image
                     src={brand.logoUrl}
                     alt={`${brand.name} logo - Prime Pick Entertainment Brand Partner`}
-                    width={160}
-                    height={48}
-                    className="object-contain w-full h-full max-h-12"
+                    width={256}
+                    height={128}
+                    className="object-contain w-full h-full"
                   />
                 </a>
               ) : (
                 <div 
-                  className="relative h-12 w-32 md:w-40 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 flex items-center justify-center"
+                  className="relative h-24 w-48 md:h-32 md:w-64 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 flex items-center justify-center"
                   title={`${brand.name} - Brand Partner`}
                 >
                   <Image
                     src={brand.logoUrl}
                     alt={`${brand.name} logo - Prime Pick Entertainment Brand Partner`}
-                    width={160}
-                    height={48}
-                    className="object-contain w-full h-full max-h-12"
+                    width={256}
+                    height={128}
+                    className="object-contain w-full h-full"
                   />
                 </div>
               )}
