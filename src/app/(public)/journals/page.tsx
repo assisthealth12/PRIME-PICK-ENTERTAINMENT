@@ -273,14 +273,6 @@ export default function JournalsPage() {
                         </div>
                       )}
                       
-                      {/* Share Button Overlay */}
-                      <button
-                        onClick={(e) => handleShare(e, journal.id)}
-                        className="absolute top-2 right-2 bg-black/50 hover:bg-accent text-white hover:text-black p-1.5 rounded-full backdrop-blur-sm opacity-0 group-hover/image:opacity-100 transition-all duration-300"
-                        title="Share Journal"
-                      >
-                        {copiedId === journal.id ? <Check size={14} /> : <Share2 size={14} />}
-                      </button>
                     </div>
 
                     {/* Right: Content */}
@@ -319,18 +311,28 @@ export default function JournalsPage() {
                           )}
                         </div>
 
-                        {journal.pdfUrl && (
+                        <div className="flex items-center gap-2">
                           <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              window.open(journal.pdfUrl, "_blank", "noopener,noreferrer");
-                            }}
-                            className="shrink-0 flex items-center gap-1.5 bg-black text-white px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest hover:bg-accent hover:text-black transition-colors rounded-sm cursor-pointer"
+                            onClick={(e) => handleShare(e, journal.id)}
+                            className="shrink-0 flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-black w-7 h-7 rounded-sm transition-colors cursor-pointer"
+                            title="Share Journal"
                           >
-                            <FileText size={10} /> PDF
+                            {copiedId === journal.id ? <Check size={12} className="text-green-600" /> : <Share2 size={12} />}
                           </button>
-                        )}
+
+                          {journal.pdfUrl && (
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window.open(journal.pdfUrl, "_blank", "noopener,noreferrer");
+                              }}
+                              className="shrink-0 flex items-center gap-1.5 bg-black text-white px-3 py-1.5 h-7 text-[9px] font-bold uppercase tracking-widest hover:bg-accent hover:text-black transition-colors rounded-sm cursor-pointer"
+                            >
+                              <FileText size={10} /> PDF
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </Link>
