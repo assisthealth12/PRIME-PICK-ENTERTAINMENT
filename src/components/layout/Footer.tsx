@@ -4,20 +4,20 @@ import Image from "next/image";
 export function Footer() {
   return (
     <footer 
-      className="relative w-full bg-cover bg-bottom pt-16 md:pt-24 pb-8 md:pb-12" 
+      className="relative w-full bg-cover bg-bottom pt-10 md:pt-24 pb-6 md:pb-12" 
       style={{ backgroundImage: "url('/footer.png')" }}
     >
-      <div className="container mx-auto px-6 md:px-12 flex flex-col justify-end">
+      <div className="container mx-auto px-5 md:px-12 flex flex-col justify-end">
         
         {/* Large Heading from Original Content */}
-        <h2 className="text-white text-4xl sm:text-5xl md:text-6xl font-bold font-heading mb-8 md:mb-12 max-w-2xl leading-tight drop-shadow-md">
+        <h2 className="text-white text-3xl sm:text-5xl md:text-6xl font-bold font-heading mb-6 md:mb-12 max-w-2xl leading-tight drop-shadow-md">
           Where Stories<br />Meet Perspectives
         </h2>
 
-        <div className="flex flex-col md:flex-row justify-between w-full mt-4 gap-12 md:gap-8">
+        <div className="flex flex-col md:flex-row justify-between w-full mt-2 gap-8 md:gap-8">
           
           {/* Left Column: Logo & Description */}
-          <div className="w-full md:w-[350px] shrink-0 flex flex-col gap-6">
+          <div className="w-full md:w-[350px] shrink-0 flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-3">
               <div className="relative w-10 h-10 overflow-hidden rounded bg-white shrink-0">
                 <Image 
@@ -45,8 +45,8 @@ export function Footer() {
           </div>
 
           {/* Right Area: Links, Line, Socials */}
-          <div className="flex-1 flex flex-col justify-end mt-4 md:mt-0">
-            <div className="grid grid-cols-2 md:flex md:flex-row justify-start md:justify-end items-start mb-8 md:mb-12 gap-8 md:gap-24">
+          <div className="flex-1 flex flex-col justify-end mt-2 md:mt-0">
+            <div className="grid grid-cols-2 md:flex md:flex-row justify-start md:justify-end items-start mb-6 md:mb-12 gap-6 md:gap-24">
               
               {/* Explore Links */}
               <div>

@@ -52,10 +52,10 @@ export function Hero() {
         
         <motion.h1 
           variants={itemVariants}
-          className="font-heading text-5xl sm:text-6xl md:text-8xl font-bold tracking-wider text-text-primary mb-4 leading-tight"
+          className="font-heading text-4xl sm:text-6xl md:text-8xl font-bold tracking-wide sm:tracking-wider text-text-primary mb-4 leading-tight w-full"
         >
           PRIME PICK<br />
-          <span className="text-accent">ENTERTAINMENT</span>
+          <span className="text-accent text-[2rem] sm:text-6xl md:text-8xl block mt-1 sm:mt-0 sm:inline">ENTERTAINMENT</span>
         </motion.h1>
         
         <motion.p 
