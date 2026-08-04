@@ -6,22 +6,31 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
+        disallow: '/admin/',
       },
       {
-        // Explicitly welcome OpenAI/ChatGPT bots
-        userAgent: ['GPTBot', 'ChatGPT-User'],
+        // OpenAI / ChatGPT bots
+        userAgent: ['GPTBot', 'ChatGPT-User', 'OAI-SearchBot'],
         allow: '/',
+        disallow: '/admin/',
       },
       {
-        // Explicitly welcome Google's AI/Gemini bots
+        // Google AI / Gemini bots
         userAgent: 'Google-Extended',
         allow: '/',
       },
       {
-        // Explicitly welcome Anthropic/Claude bots
+        // Anthropic / Claude bots
         userAgent: ['anthropic-ai', 'ClaudeBot'],
         allow: '/',
-      }
+        disallow: '/admin/',
+      },
+      {
+        // Perplexity AI bot
+        userAgent: 'PerplexityBot',
+        allow: '/',
+        disallow: '/admin/',
+      },
     ],
     sitemap: 'https://www.primepickentertainment.com/sitemap.xml',
   };
